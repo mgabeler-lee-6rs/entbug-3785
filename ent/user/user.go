@@ -2,11 +2,20 @@
 
 package user
 
+import (
+	"net/url"
+
+	"entgo.io/ent/dialect/sql"
+	"entgo.io/ent/schema/field"
+)
+
 const (
 	// Label holds the string label denoting the user type in the database.
 	Label = "user"
 	// FieldID holds the string denoting the id field in the database.
 	FieldID = "id"
+	// FieldURL holds the string denoting the url field in the database.
+	FieldURL = "url"
 	// FieldAge holds the string denoting the age field in the database.
 	FieldAge = "age"
 	// FieldName holds the string denoting the name field in the database.
@@ -18,6 +27,7 @@ const (
 // Columns holds all SQL columns for user fields.
 var Columns = []string{
 	FieldID,
+	FieldURL,
 	FieldAge,
 	FieldName,
 }
@@ -30,4 +40,34 @@ func ValidColumn(column string) bool {
 		}
 	}
 	return false
+}
+
+var (
+	// ValueScanner of all User fields.
+	ValueScanner struct {
+		URL field.TypeValueScanner[*url.URL]
+	}
+)
+
+// OrderOption defines the ordering options for the User queries.
+type OrderOption func(*sql.Selector)
+
+// ByID orders the results by the id field.
+func ByID(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldID, opts...).ToFunc()
+}
+
+// ByURL orders the results by the url field.
+func ByURL(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldURL, opts...).ToFunc()
+}
+
+// ByAge orders the results by the age field.
+func ByAge(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldAge, opts...).ToFunc()
+}
+
+// ByName orders the results by the name field.
+func ByName(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldName, opts...).ToFunc()
 }

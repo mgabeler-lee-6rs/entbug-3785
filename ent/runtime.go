@@ -2,8 +2,21 @@
 
 package ent
 
+import (
+	"net/url"
+
+	"entgo.io/bug/ent/schema"
+	"entgo.io/bug/ent/user"
+	"entgo.io/ent/schema/field"
+)
+
 // The init function reads all schema descriptors with runtime code
 // (default values, validators, hooks and policies) and stitches it
 // to their package variables.
 func init() {
+	userFields := schema.User{}.Fields()
+	_ = userFields
+	// userDescURL is the schema descriptor for url field.
+	userDescURL := userMixinFields0[0].Descriptor()
+	user.ValueScanner.URL = userDescURL.ValueScanner.(field.TypeValueScanner[*url.URL])
 }

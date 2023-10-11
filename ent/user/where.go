@@ -3,6 +3,9 @@
 package user
 
 import (
+	"fmt"
+	"net/url"
+
 	"entgo.io/bug/ent/predicate"
 	"entgo.io/ent/dialect/sql"
 )
@@ -52,6 +55,12 @@ func IDLTE(id int) predicate.User {
 	return predicate.User(sql.FieldLTE(FieldID, id))
 }
 
+// URL applies equality check predicate on the "url" field. It's identical to URLEQ.
+func URL(v *url.URL) predicate.User {
+	vc, err := ValueScanner.URL.Value(v)
+	return predicate.UserOrErr(sql.FieldEQ(FieldURL, vc), err)
+}
+
 // Age applies equality check predicate on the "age" field. It's identical to AgeEQ.
 func Age(v int) predicate.User {
 	return predicate.User(sql.FieldEQ(FieldAge, v))
@@ -60,6 +69,120 @@ func Age(v int) predicate.User {
 // Name applies equality check predicate on the "name" field. It's identical to NameEQ.
 func Name(v string) predicate.User {
 	return predicate.User(sql.FieldEQ(FieldName, v))
+}
+
+// URLEQ applies the EQ predicate on the "url" field.
+func URLEQ(v *url.URL) predicate.User {
+	vc, err := ValueScanner.URL.Value(v)
+	return predicate.UserOrErr(sql.FieldEQ(FieldURL, vc), err)
+}
+
+// URLNEQ applies the NEQ predicate on the "url" field.
+func URLNEQ(v *url.URL) predicate.User {
+	vc, err := ValueScanner.URL.Value(v)
+	return predicate.UserOrErr(sql.FieldNEQ(FieldURL, vc), err)
+}
+
+// URLIn applies the In predicate on the "url" field.
+func URLIn(vs ...*url.URL) predicate.User {
+	var (
+		err error
+		v   = make([]any, len(vs))
+	)
+	for i := range v {
+		if v[i], err = ValueScanner.URL.Value(vs[i]); err != nil {
+			break
+		}
+	}
+	return predicate.UserOrErr(sql.FieldIn(FieldURL, v...), err)
+}
+
+// URLNotIn applies the NotIn predicate on the "url" field.
+func URLNotIn(vs ...*url.URL) predicate.User {
+	var (
+		err error
+		v   = make([]any, len(vs))
+	)
+	for i := range v {
+		if v[i], err = ValueScanner.URL.Value(vs[i]); err != nil {
+			break
+		}
+	}
+	return predicate.UserOrErr(sql.FieldNotIn(FieldURL, v...), err)
+}
+
+// URLGT applies the GT predicate on the "url" field.
+func URLGT(v *url.URL) predicate.User {
+	vc, err := ValueScanner.URL.Value(v)
+	return predicate.UserOrErr(sql.FieldGT(FieldURL, vc), err)
+}
+
+// URLGTE applies the GTE predicate on the "url" field.
+func URLGTE(v *url.URL) predicate.User {
+	vc, err := ValueScanner.URL.Value(v)
+	return predicate.UserOrErr(sql.FieldGTE(FieldURL, vc), err)
+}
+
+// URLLT applies the LT predicate on the "url" field.
+func URLLT(v *url.URL) predicate.User {
+	vc, err := ValueScanner.URL.Value(v)
+	return predicate.UserOrErr(sql.FieldLT(FieldURL, vc), err)
+}
+
+// URLLTE applies the LTE predicate on the "url" field.
+func URLLTE(v *url.URL) predicate.User {
+	vc, err := ValueScanner.URL.Value(v)
+	return predicate.UserOrErr(sql.FieldLTE(FieldURL, vc), err)
+}
+
+// URLContains applies the Contains predicate on the "url" field.
+func URLContains(v *url.URL) predicate.User {
+	vc, err := ValueScanner.URL.Value(v)
+	vcs, ok := vc.(string)
+	if err == nil && !ok {
+		err = fmt.Errorf("url value is not a string: %T", vc)
+	}
+	return predicate.UserOrErr(sql.FieldContains(FieldURL, vcs), err)
+}
+
+// URLHasPrefix applies the HasPrefix predicate on the "url" field.
+func URLHasPrefix(v *url.URL) predicate.User {
+	vc, err := ValueScanner.URL.Value(v)
+	vcs, ok := vc.(string)
+	if err == nil && !ok {
+		err = fmt.Errorf("url value is not a string: %T", vc)
+	}
+	return predicate.UserOrErr(sql.FieldHasPrefix(FieldURL, vcs), err)
+}
+
+// URLHasSuffix applies the HasSuffix predicate on the "url" field.
+func URLHasSuffix(v *url.URL) predicate.User {
+	vc, err := ValueScanner.URL.Value(v)
+	vcs, ok := vc.(string)
+	if err == nil && !ok {
+		err = fmt.Errorf("url value is not a string: %T", vc)
+	}
+	return predicate.UserOrErr(sql.FieldHasSuffix(FieldURL, vcs), err)
+}
+
+// URLEqualFold applies the EqualFold predicate on the "url" field.
+func URLEqualFold(v *url.URL) predicate.User {
+	vc, err := ValueScanner.URL.Value(v)
+	vcs, ok := vc.(string)
+	if err == nil && !ok {
+		err = fmt.Errorf("url value is not a string: %T", vc)
+	}
+	return predicate.UserOrErr(sql.FieldEqualFold(FieldURL, vcs), err)
+}
+
+// URLContainsFold applies the ContainsFold predicate on the "url" field.
+func URLContainsFold(v *url.URL) predicate.User {
+	vc, err := ValueScanner.URL.Value(v)
+	vcs, ok := vc.(string)
+	if err == nil && !ok {
+		err = fmt.Errorf("url value is not a string: %T", vc)
+	}
+	return predicate.UserOrErr(sql.FieldContainsFold(FieldURL, vcs), err)
 }
 
 // AgeEQ applies the EQ predicate on the "age" field.
@@ -169,32 +292,15 @@ func NameContainsFold(v string) predicate.User {
 
 // And groups predicates with the AND operator between them.
 func And(predicates ...predicate.User) predicate.User {
-	return predicate.User(func(s *sql.Selector) {
-		s1 := s.Clone().SetP(nil)
-		for _, p := range predicates {
-			p(s1)
-		}
-		s.Where(s1.P())
-	})
+	return predicate.User(sql.AndPredicates(predicates...))
 }
 
 // Or groups predicates with the OR operator between them.
 func Or(predicates ...predicate.User) predicate.User {
-	return predicate.User(func(s *sql.Selector) {
-		s1 := s.Clone().SetP(nil)
-		for i, p := range predicates {
-			if i > 0 {
-				s1.Or()
-			}
-			p(s1)
-		}
-		s.Where(s1.P())
-	})
+	return predicate.User(sql.OrPredicates(predicates...))
 }
 
 // Not applies the not operator on the given predicate.
 func Not(p predicate.User) predicate.User {
-	return predicate.User(func(s *sql.Selector) {
-		p(s.Not())
-	})
+	return predicate.User(sql.NotPredicates(p))
 }
